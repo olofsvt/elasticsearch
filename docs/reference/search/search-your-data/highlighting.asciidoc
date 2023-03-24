@@ -126,10 +126,7 @@ for a particular index with the index setting <<index-max-analyzed-offset,`index
 Highlighting settings can be set on a global level and overridden at
 the field level.
 
-boundary_chars:: A string that contains each boundary character.
-Defaults to `.,!? \t\n`.
-
-boundary_max_scan:: How far to scan for boundary characters. Defaults to `20`.
+==== Common settings
 
 [[boundary-scanners]]
 boundary_scanner:: Specifies how to break the highlighted fragments: `chars`,
@@ -174,18 +171,6 @@ field anyway, you must explicitly specify that field name.
 force_source:: Highlight based on the source even if the field is
 stored separately. Defaults to `false`.
 
-fragmenter:: Specifies how text should be broken up in highlight
-snippets: `simple` or `span`. Only valid for the `plain` highlighter.
-Defaults to `span`.
-
-`simple`::: Breaks up text into same-sized fragments.
-`span`::: Breaks up text into same-sized fragments, but tries to avoid
-breaking up text between highlighted terms. This is helpful when you're
-querying for phrases. Default.
-
-fragment_offset:: Controls the margin from which you want to start
-highlighting. Only valid when using the `fvh` highlighter.
-
 fragment_size:: The size of the highlighted fragment in characters. Defaults
 to 100.
 
@@ -197,13 +182,6 @@ IMPORTANT: {es} does not validate that `highlight_query` contains
 the search query in any way so it is possible to define it so
 legitimate query results are not highlighted. Generally, you should
 include the search query as part of the `highlight_query`.
-
-matched_fields:: Combine matches on multiple fields to highlight a single field.
-This is most intuitive for multifields that analyze the same string in different
-ways. All `matched_fields` must have `term_vector` set to
-`with_positions_offsets`, but only the field to which
-the matches are combined is loaded so only that field benefits from having
-`store` set to `yes`. Only valid for the `fvh` highlighter.
 
 no_match_size:: The amount of text you want to return from the beginning
 of the field if there are no matching fragments to highlight. Defaults
@@ -223,12 +201,6 @@ Each highlighter applies its own logic to compute relevancy scores. See
 the document <<how-es-highlighters-work-internally, How highlighters work internally>>
 for more details how different highlighters find the best fragments.
 
-phrase_limit:: Controls the number of matching phrases in a document that are
-considered. Prevents the `fvh` highlighter from analyzing too many phrases
-and consuming too much memory. When using `matched_fields`, `phrase_limit`
-phrases per matched field are considered. Raising the limit increases query
-time and consumes more memory. Only supported by the `fvh` highlighter.
-Defaults to 256.
 
 pre_tags:: Use in conjunction with `post_tags` to define the HTML tags
 to use for the highlighted text. By default, highlighted text is wrapped
@@ -268,6 +240,44 @@ schema defines the following `pre_tags` and defines `post_tags` as
 [[highlighter-type]]
 type:: The highlighter to use: `unified`, `plain`, or `fvh`. Defaults to
 `unified`.
+
+==== Unified highlighter settings
+
+==== Fast vector highlighter settings
+
+boundary_chars:: A string that contains each boundary character.
+Defaults to `.,!? \t\n`.
+
+boundary_max_scan:: How far to scan for boundary characters. Defaults to `20`.
+
+fragment_offset:: Controls the margin from which you want to start
+highlighting. Only valid when using the `fvh` highlighter.
+
+matched_fields:: Combine matches on multiple fields to highlight a single field.
+This is most intuitive for multifields that analyze the same string in different
+ways. All `matched_fields` must have `term_vector` set to
+`with_positions_offsets`, but only the field to which
+the matches are combined is loaded so only that field benefits from having
+`store` set to `yes`. Only valid for the `fvh` highlighter.
+
+phrase_limit:: Controls the number of matching phrases in a document that are
+considered. Prevents the `fvh` highlighter from analyzing too many phrases
+and consuming too much memory. When using `matched_fields`, `phrase_limit`
+phrases per matched field are considered. Raising the limit increases query
+time and consumes more memory. Only supported by the `fvh` highlighter.
+Defaults to 256.
+
+==== Plain highlighter settings
+
+fragmenter:: Specifies how text should be broken up in highlight
+snippets: `simple` or `span`. Only valid for the `plain` highlighter.
+Defaults to `span`.
+
+`simple`::: Breaks up text into same-sized fragments.
+`span`::: Breaks up text into same-sized fragments, but tries to avoid
+breaking up text between highlighted terms. This is helpful when you're
+querying for phrases. Default.
+
 
 [discrete]
 [[highlighting-examples]]
